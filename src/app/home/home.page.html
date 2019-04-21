@@ -1,0 +1,67 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Home
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-item color="warning" *ngIf="!isOnline">
+  <ion-label>
+    Device Offline
+  </ion-label>
+</ion-item>
+<ion-content *ngIf="weatherResponse">
+  <ion-card class="welcome-card">
+    <ion-card-content>
+      <ion-grid>
+        <ion-row class="ion-justify-content-center ion-align-items-center">
+          <ion-col>
+            <ion-img [src]="'http://openweathermap.org/img/w/'+weatherResponse.weather[0].icon+'.png'"></ion-img>
+          </ion-col>
+          <ion-col class="temp-reading">
+            {{weatherResponse.main.temp}} <sup>o</sup> C
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-text>
+              {{weatherResponse.weather[0].main}}
+            </ion-text>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-text>
+              {{weatherResponse.name}}
+            </ion-text>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
+  <ion-list>
+    <ion-list-header>
+      <ion-label>Information</ion-label>
+    </ion-list-header>
+    <ion-item>
+      <ion-label slot="start">Wind</ion-label>
+      <ion-label slot="end">{{weatherResponse.wind.speed}} m/s</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label slot="start">Pressure</ion-label>
+      <ion-label slot="end">{{weatherResponse.main.pressure}}hpa</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label slot="start">Humidity</ion-label>
+      <ion-label slot="end">{{weatherResponse.main.humidity}}%</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label slot="start">Maximum Temp.</ion-label>
+      <ion-label slot="end">{{weatherResponse.main.temp_max}}<sup>o</sup> C</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label slot="start">Minimum Temp.</ion-label>
+      <ion-label slot="end">{{weatherResponse.main.temp_min}}<sup>o</sup> C</ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
