@@ -19,28 +19,19 @@ export class HomePage implements OnInit, OnDestroy {
   pollingData: any;
   constructor(private geoLocation: Geolocation,
     private http: HttpClient, public loadingController: LoadingController,
-    private network: Network
+    private network: Network,
   ) {
     this.isOnline = true;
   }
   ngOnInit() {
-    this.disconnectSubscription = this.network.onDisconnect().subscribe(() => {
-      this.isOnline = false;
-    });
-    this.connectSubscription = this.network.onConnect().subscribe(() => {
-      // We just got a connection but we need to wait briefly
-      // before we determine the connection type. Might need to wait.
-      // prior to doing any api requests as well.
-      setTimeout(() => {
-        this.isOnline = true;
-        if (this.currentLocation)
-          this.getWeatherData(this.currentLocation);
-      }, 1000);
-    });
 
-    this.positionWatch = this.geoLocation.watchPosition().subscribe((data) => {
-      this.currentLocation = data.coords;
-      this.getWeatherData(this.currentLocation);
+    this.positionWatch = this.geoLocation.watchPosition();
+    this.positionWatch.subscribe((data) => {
+      if (!this.currentLocation ||
+        (this.currentLocation.latitude !== data.coords.latitude && this.currentLocation.longitude !== data.coords.longitude)) {
+        this.currentLocation = data.coords;
+        this.getWeatherData(this.currentLocation);
+      }
     });
 
     this.pollingData = interval(60000).subscribe(() => {
@@ -48,11 +39,6 @@ export class HomePage implements OnInit, OnDestroy {
         this.getWeatherData(this.currentLocation);
       }
     });
-    /* setInterval(() => {
-      if (this.currentLocation) {
-        this.getWeatherData(this.currentLocation);
-      }
-    }, 60000);*/
   }
 
   ngOnDestroy() {
@@ -68,7 +54,8 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   public async getWeatherData(currentLocation) {
-    const url = 'https://api.openweathermap.org/data/2.5/weather?lat=' + currentLocation.latitude + '&lon=' + currentLocation.longitude + '&units=metric&appid=517c7bbf790248290ad52d57725c4d5f';
+    const url = 'https://api.openweathermap.org/data/2.5/weather?lat=' +
+      currentLocation.latitude + '&lon=' + currentLocation.longitude + '&units=metric&appid=517c7bbf790248290ad52d57725c4d5f';
     const loading = await this.loadingController.create({
       message: 'Updating',
     });
