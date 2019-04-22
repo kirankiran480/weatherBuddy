@@ -3,6 +3,7 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { HttpClient } from '@angular/common/http';
 import { LoadingController } from '@ionic/angular';
 import { Network } from '@ionic-native/network/ngx';
+import { interval } from 'rxjs';
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -15,6 +16,7 @@ export class HomePage implements OnInit, OnDestroy {
   disconnectSubscription: any;
   connectSubscription: any;
   positionWatch: any;
+  pollingData: any;
   constructor(private geoLocation: Geolocation,
     private http: HttpClient, public loadingController: LoadingController,
     private network: Network
@@ -41,11 +43,16 @@ export class HomePage implements OnInit, OnDestroy {
       this.getWeatherData(this.currentLocation);
     });
 
-    setInterval(() => {
+    this.pollingData = interval(60000).subscribe(() => {
       if (this.currentLocation) {
         this.getWeatherData(this.currentLocation);
       }
-    }, 60000);
+    });
+    /* setInterval(() => {
+      if (this.currentLocation) {
+        this.getWeatherData(this.currentLocation);
+      }
+    }, 60000);*/
   }
 
   ngOnDestroy() {
