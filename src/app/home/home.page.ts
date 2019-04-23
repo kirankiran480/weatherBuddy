@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { HttpClient } from '@angular/common/http';
 import { LoadingController } from '@ionic/angular';
-import { Network } from '@ionic-native/network/ngx';
 import { interval } from 'rxjs';
 @Component({
   selector: 'app-home',
@@ -18,22 +17,18 @@ export class HomePage implements OnInit, OnDestroy {
   positionWatch: any;
   pollingData: any;
   constructor(private geoLocation: Geolocation,
-    private http: HttpClient, public loadingController: LoadingController,
-    private network: Network,
+    private http: HttpClient, public loadingController: LoadingController
   ) {
     this.isOnline = true;
   }
   ngOnInit() {
-
-    this.positionWatch = this.geoLocation.watchPosition();
-    this.positionWatch.subscribe((data) => {
+    this.positionWatch = this.geoLocation.watchPosition().subscribe((data) => {
       if (!this.currentLocation ||
         (this.currentLocation.latitude !== data.coords.latitude && this.currentLocation.longitude !== data.coords.longitude)) {
         this.currentLocation = data.coords;
         this.getWeatherData(this.currentLocation);
       }
     });
-
     this.pollingData = interval(60000).subscribe(() => {
       if (this.currentLocation) {
         this.getWeatherData(this.currentLocation);
@@ -42,14 +37,8 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.connectSubscription) {
-      this.connectSubscription.unsubscribe();
-    }
     if (this.positionWatch) {
       this.positionWatch.unsubscribe();
-    }
-    if (this.disconnectSubscription) {
-      this.disconnectSubscription.unsubscribe();
     }
   }
 
@@ -60,9 +49,11 @@ export class HomePage implements OnInit, OnDestroy {
       message: 'Updating',
     });
     loading.present();
-    this.http.get(url).subscribe(async (response) => {
+    this.http.get(url).subscribe((response) => {
       this.weatherResponse = response;
       loading.dismiss();
+    }, (error) => {
+      console.log(error);
     });
   }
 }

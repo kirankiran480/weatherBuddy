@@ -7,6 +7,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { RouterTestingModule } from '@angular/router/testing';
 
 import { AppComponent } from './app.component';
+import { HttpClientModule } from '@angular/common/http';
 
 describe('AppComponent', () => {
 
@@ -26,7 +27,7 @@ describe('AppComponent', () => {
         { provide: SplashScreen, useValue: splashScreenSpy },
         { provide: Platform, useValue: platformSpy },
       ],
-      imports: [ RouterTestingModule.withRoutes([])],
+      imports: [RouterTestingModule.withRoutes([]), HttpClientModule],
     }).compileComponents();
   }));
 
@@ -42,26 +43,6 @@ describe('AppComponent', () => {
     await platformReadySpy;
     expect(statusBarSpy.styleDefault).toHaveBeenCalled();
     expect(splashScreenSpy.hide).toHaveBeenCalled();
-  });
-
-  it('should have menu labels', async () => {
-    const fixture = await TestBed.createComponent(AppComponent);
-    await fixture.detectChanges();
-    const app = fixture.nativeElement;
-    const menuItems = app.querySelectorAll('ion-label');
-    expect(menuItems.length).toEqual(2);
-    expect(menuItems[0].textContent).toContain('Home');
-    expect(menuItems[1].textContent).toContain('List');
-  });
-
-  it('should have urls', async () => {
-    const fixture = await TestBed.createComponent(AppComponent);
-    await fixture.detectChanges();
-    const app = fixture.nativeElement;
-    const menuItems = app.querySelectorAll('ion-item');
-    expect(menuItems.length).toEqual(2);
-    expect(menuItems[0].getAttribute('ng-reflect-router-link')).toEqual('/home');
-    expect(menuItems[1].getAttribute('ng-reflect-router-link')).toEqual('/list');
   });
 
 });

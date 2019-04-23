@@ -29,6 +29,8 @@ export class AppComponent {
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+    }, (error) => {
+      console.log(error);
     });
   }
 }
